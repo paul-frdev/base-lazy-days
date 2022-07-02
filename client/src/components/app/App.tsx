@@ -1,17 +1,23 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { ReactElement } from 'react';
+import { QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
+import { queryClient } from '../../reactQuery/queryClient';
 import { theme } from '../../theme';
+import { Header } from './Header';
 import { Loading } from './Loading';
-import { Navbar } from './Navbar';
 import { Routes } from './Routes';
 
 export function App(): ReactElement {
   return (
     <ChakraProvider theme={theme}>
-      <Navbar />
-      <Loading />
-      <Routes />
+      <QueryClientProvider client={queryClient}>
+        <Header />
+        <Loading />
+        <Routes />
+        <ReactQueryDevtools />
+      </QueryClientProvider>
     </ChakraProvider>
   );
 }

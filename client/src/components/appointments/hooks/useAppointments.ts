@@ -1,6 +1,13 @@
 // @ts-nocheck
 import dayjs from 'dayjs';
-import { Dispatch, SetStateAction, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 
 import { axiosInstance } from '../../../axiosInstance';
 import { queryKeys } from '../../../reactQuery/constants';
@@ -58,6 +65,12 @@ export function useAppointments(): UseAppointments {
   // We need the user to pass to getAvailableAppointments so we can show
   //   appointments that the logged-in user has reserved (in white)
   const { user } = useUser();
+  const selectFn = useCallback(
+    (data) => {
+      getAvailableAppointments(data, user);
+    },
+    [user],
+  );
 
   /** ****************** END 2: filter appointments  ******************** */
   /** ****************** START 3: useQuery  ***************************** */
@@ -70,9 +83,31 @@ export function useAppointments(): UseAppointments {
   //
   //    2. The getAppointments query function needs monthYear.year and
   //       monthYear.month
-  const appointments = {};
+
+  const fallback = {};
+
+  const { data: appointments = fallback } = useQuery(
+    [queryKeys.appointments, monthYear.year, monthYear.month],
+    () => getAppointments(monthYear.year, monthYear.month),
+    {
+      select: showAll ? undefined : selectFn,
+    },
+  );
 
   /** ****************** END 3: useQuery  ******************************* */
 
   return { appointments, monthYear, updateMonthYear, showAll, setShowAll };
+}
+
+export function usePrefetchAppointments(): void {
+  const queryClient = useQueryClient();
+  const { monthYear } = useAppointments();
+  const nextMonthYear = getNewMonthYear(monthYear, 1);
+
+  useEffect(() => {
+    queryClient.prefetchQuery(
+      [queryKeys.appointments, nextMonthYear.year, nextMonthYear.month],
+      () => getAppointments(nextMonthYear.year, nextMonthYear.month),
+    );
+  }, [nextMonthYear, queryClient]);
 }

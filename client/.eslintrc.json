@@ -52,8 +52,8 @@
     "import/extensions": ["error", "never"],
     "import/prefer-default-export": 0,
     "import/no-anonymous-default-export": 0,
-    "import/no-unresolved": 2,
-    "simple-import-sort/imports": "error",
+    "import/no-unresolved": "warn",
+    "simple-import-sort/imports": "warn",
     "simple-import-sort/exports": "error",
     "sort-imports": "off",
     "import/order": "off",
@@ -65,7 +65,7 @@
     "react/no-array-index-key": "off",
     "react/react-in-jsx-scope": "off",
     "prettier/prettier": [
-      "error",
+      "warn",
       {
         "endOfLine": "auto"
       }
