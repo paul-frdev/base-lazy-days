@@ -65,12 +65,9 @@ export function useAppointments(): UseAppointments {
   // We need the user to pass to getAvailableAppointments so we can show
   //   appointments that the logged-in user has reserved (in white)
   const { user } = useUser();
-  const selectFn = useCallback(
-    (data) => {
-      getAvailableAppointments(data, user);
-    },
-    [user],
-  );
+  const selectFn = useCallback((data) => getAvailableAppointments(data, user), [
+    user,
+  ]);
 
   /** ****************** END 2: filter appointments  ******************** */
   /** ****************** START 3: useQuery  ***************************** */
