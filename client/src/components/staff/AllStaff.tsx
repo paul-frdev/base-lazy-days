@@ -10,6 +10,8 @@ export function AllStaff(): ReactElement {
   const { staff, filter, setFilter } = useStaff();
   const treatments = useTreatments();
 
+  console.log(filter);
+
   return (
     <Box>
       <Heading mt={10} align="center">
