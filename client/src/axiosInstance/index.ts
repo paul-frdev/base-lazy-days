@@ -8,4 +8,5 @@ export function getJWTHeader(user: User): Record<string, string> {
 }
 
 const config: AxiosRequestConfig = { baseURL: baseUrl };
+
 export const axiosInstance = axios.create(config);

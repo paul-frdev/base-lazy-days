@@ -34,6 +34,12 @@ interface UseAppointments {
   setShowAll: Dispatch<SetStateAction<boolean>>;
 }
 
+// common options for both query
+const commonOptions = {
+  staleTime: 0,
+  cacheTime: 30000,
+};
+
 // The purpose of this hook:
 //   1. track the current month/year (aka monthYear) selected by the user
 //     1a. provide a way to update state
@@ -73,6 +79,16 @@ export function useAppointments(): UseAppointments {
   /** ****************** START 3: useQuery  ***************************** */
   // useQuery call for appointments for the current monthYear
 
+  const queryClient = useQueryClient();
+  const nextMonthYear = getNewMonthYear(monthYear, 1);
+
+  useEffect(() => {
+    queryClient.prefetchQuery(
+      [queryKeys.appointments, nextMonthYear.year, nextMonthYear.month],
+      () => getAppointments(nextMonthYear.year, nextMonthYear.month),
+      commonOptions,
+    );
+  }, [nextMonthYear, queryClient]);
   // TODO: update with useQuery!
   // Notes:
   //    1. appointments is an AppointmentDateMap (object with days of month
@@ -88,23 +104,15 @@ export function useAppointments(): UseAppointments {
     () => getAppointments(monthYear.year, monthYear.month),
     {
       select: showAll ? undefined : selectFn,
+      ...commonOptions,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: true,
+      refetchInterval: 60000,
     },
   );
 
   /** ****************** END 3: useQuery  ******************************* */
 
   return { appointments, monthYear, updateMonthYear, showAll, setShowAll };
-}
-
-export function usePrefetchAppointments(): void {
-  const queryClient = useQueryClient();
-  const { monthYear } = useAppointments();
-  const nextMonthYear = getNewMonthYear(monthYear, 1);
-
-  useEffect(() => {
-    queryClient.prefetchQuery(
-      [queryKeys.appointments, nextMonthYear.year, nextMonthYear.month],
-      () => getAppointments(nextMonthYear.year, nextMonthYear.month),
-    );
-  }, [nextMonthYear, queryClient]);
 }

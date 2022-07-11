@@ -1,5 +1,4 @@
 import { Icon, Stack, Text } from '@chakra-ui/react';
-import { usePrefetchAppointments } from 'components/appointments/hooks/useAppointments';
 import { usePrefetchTreatments } from 'components/treatments/hooks/useTreatments';
 import { ReactElement } from 'react';
 import { GiFlowerPot } from 'react-icons/gi';
@@ -8,7 +7,6 @@ import { BackgroundImage } from '../common/BackgroundImage';
 
 export function Home(): ReactElement {
   usePrefetchTreatments();
-  usePrefetchAppointments();
 
   return (
     <Stack align="center" justify="center" height="84vh">
